@@ -1,22 +1,40 @@
-importar { Terminal } desde '@es-js/terminal'
+import {Terminal} from '@es-js/terminal';
+import {obtenerJson} from 'https://desarrollo-aplicaciones.vercel.app/2024/code/obtener-json.js';
+import {validarSecreto} from 'https://desarrollo-aplicaciones.vercel.app/2024/code/validar-secreto.js';
 
-asincrono funcion inicio() {
-	Terminal.limpiar()
-
-	Terminal.escribir('Ingresa un valor:')
-
-	const resultado = esperar Terminal.leer()
-
-	Terminal.escribir({
-		Resultado: resultado,
-		Tipo: tipoDe resultado,
-	})
-
-	Terminal.escribir('Presiona ENTER para volver a iniciar')
-
-	esperar Terminal.leerEnter()
-
-	esperar inicio()
+async function inicio() {
+    Terminal.escribir('Hola! Ingresa la palabra secreta:');
+    
+    var secreto = await Terminal.leer();
+    
+    var dni = '45190489';
+    
+    if (await validarSecreto(dni, secreto)) {
+        Terminal.escribir('clave correcta ✔');
+        await mostrarCotizacion();
+    } else {
+        Terminal.escribir('Palabra secreta inválida');
+    }
+    
+    Terminal.escribir('Presiona ENTER para volver a ingresar');
+    
+    await Terminal.leerEnter();
+    
+    Terminal.limpiar();
+    
+    inicio();
 }
 
-inicio()
+async function mostrarCotizacion() {
+    const dolarBlue = await obtenerJson('https://dolarapi.com/v1/dolares/blue');
+    Terminal.escribir('los datos del dolar blue son');
+    Terminal.escribir('venta: ' + dolarBlue.venta);
+    Terminal.escribir('compra: ' + dolarBlue.compra);
+    Terminal.escribir('promedio: ' + ((dolarBlue.venta + dolarBlue.compra) / 2));
+    var fecha = dolarBlue.fechaActualizacion.slice(0,10);
+    Terminal.escribir('fecha: '+fecha);
+    var fecha = dolarBlue.fechaActualizacion.slice(11,16);
+    Terminal.escribir('hora: '+fecha);
+}
+
+inicio();
